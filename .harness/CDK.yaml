@@ -64,7 +64,7 @@ pipeline:
                         identifier: Git_Clone
                         spec:
                           connectorRef: account.Github
-                          repoName: harenss-cdk
+                          repoName: harness-cdk
                           build:
                             type: branch
                             spec:
