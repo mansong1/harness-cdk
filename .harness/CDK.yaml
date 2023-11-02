@@ -70,6 +70,15 @@ pipeline:
                             spec:
                               branch: main
                     - step:
+                        type: Run
+                        name: Install Requirements
+                        identifier: Install_Requirements
+                        spec:
+                          connectorRef: account.Dockerhub
+                          image: python:latest
+                          shell: Sh
+                          command: python3 -m pip install -r requirements.txt
+                    - step:
                         type: AwsCdkSynth
                         name: CDK Synth
                         identifier: CDK_Synth
