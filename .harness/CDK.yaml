@@ -70,23 +70,12 @@ pipeline:
                             spec:
                               branch: main
                     - step:
-                        type: Run
-                        name: Install Requirements
-                        identifier: Install_Requirements
-                        spec:
-                          connectorRef: account.Dockerhub
-                          image: python:3.9.18
-                          shell: Sh
-                          command: |-
-                            cd harness-cdk/
-                            pip install -r requirements.txt
-                    - step:
                         type: AwsCdkSynth
                         name: CDK Synth
                         identifier: CDK_Synth
                         spec:
                           connectorRef: account.Dockerhub
-                          image: harness/aws-cdk-plugin:1.0.0-python
+                          image: mansong/aws-cdk-plugin:1.0.0-python
                           appPath: harness-cdk
                         timeout: 10m
                     - step:
@@ -95,7 +84,7 @@ pipeline:
                         identifier: CDK_Bootstrap
                         spec:
                           connectorRef: account.Dockerhub
-                          image: harness/aws-cdk-plugin:1.0.0-python
+                          image: mansong/aws-cdk-plugin:1.0.0-python
                         timeout: 10m
                     - step:
                         type: AwsCdkDiff
@@ -103,7 +92,7 @@ pipeline:
                         identifier: CDK_Diff
                         spec:
                           connectorRef: account.Dockerhub
-                          image: harness/aws-cdk-plugin:1.0.0-python
+                          image: mansong/aws-cdk-plugin:1.0.0-python
                         timeout: 10m
                     - step:
                         type: AwsCdkDeploy
@@ -111,7 +100,7 @@ pipeline:
                         identifier: CDK_Deploy
                         spec:
                           connectorRef: account.Dockerhub
-                          image: harness/aws-cdk-plugin:1.0.0-python
+                          image: mansong/aws-cdk-plugin:1.0.0-python
                           provisionerIdentifier: hitcounter
                         timeout: 10m
                   stepGroupInfra:
