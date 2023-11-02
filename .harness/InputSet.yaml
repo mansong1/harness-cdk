@@ -1,0 +1,15 @@
+inputSet:
+  name: InputSet
+  identifier: InputSet
+  orgIdentifier: default
+  projectIdentifier: Serverless
+  pipeline:
+    identifier: CDK
+    properties:
+      ci:
+        codebase:
+          build:
+            type: branch
+            spec:
+              branch: <+trigger.branch>
+  object Object: pipeline.properties.ci.codebase
