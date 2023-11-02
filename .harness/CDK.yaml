@@ -76,6 +76,7 @@ pipeline:
                         spec:
                           connectorRef: account.Dockerhub
                           image: harness/aws-cdk-plugin:1.0.0-java
+                          appPath: harness-cdk
                         timeout: 10m
                     - step:
                         type: AwsCdkBootstrap
