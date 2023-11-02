@@ -27,21 +27,6 @@ pipeline:
           execution:
             steps:
               - step:
-                  type: Run
-                  name: Run Unit Tests
-                  identifier: Run_Unit_Tests
-                  spec:
-                    shell: Sh
-                    command: |-
-                      python3 -m pip install -r requirements.txt
-                      python3 -m pip install -r requirements-dev.txt
-                      pytest --junitxml=out_report.xml
-                    reports:
-                      type: JUnit
-                      spec:
-                        paths:
-                          - "**/*.xml"
-              - step:
                   type: RunTests
                   name: Unit Tests
                   identifier: Unit_Tests
