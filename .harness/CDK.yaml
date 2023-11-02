@@ -1,0 +1,48 @@
+pipeline:
+  name: CDK
+  identifier: CDK
+  projectIdentifier: Serverless
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.Github
+        repoName: harness-cdk
+        build: <+input>
+  stages:
+    - stage:
+        name: Build - Test
+        identifier: Build_Test
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: RunTests
+                  name: Unit Tests
+                  identifier: Unit_Tests
+                  spec:
+                    language: Python
+                    buildTool: Pytest
+                    args: "--junitxml=out_report.xml"
+                    runOnlySelectedTests: true
+                    preCommand: |-
+                      python3 -m venv .venv
+                      . .venv/bin/activate
+                      python3 -m pip install -r requirements.txt
+                      python3 -m pip install -e .
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - out_report.xml*
+                    enableTestSplitting: false
