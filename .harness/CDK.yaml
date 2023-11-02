@@ -78,6 +78,9 @@ pipeline:
                           image: mansong/aws-cdk-plugin:1.0.0-python
                           appPath: harness-cdk
                         timeout: 10m
+                        when:
+                          stageStatus: Success
+                          condition: "false"
                     - step:
                         type: AwsCdkBootstrap
                         name: CDK Bootstrap
