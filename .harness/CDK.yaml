@@ -75,11 +75,11 @@ pipeline:
                         identifier: Install_Requirements
                         spec:
                           connectorRef: account.Dockerhub
-                          image: python:latest
+                          image: python:3.9.18
                           shell: Sh
                           command: |-
                             cd harness-cdk/
-                            python3 -m pip install -r requirements.txt
+                            pip install -r requirements.txt
                     - step:
                         type: AwsCdkSynth
                         name: CDK Synth
