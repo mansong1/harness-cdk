@@ -80,7 +80,6 @@ pipeline:
                         timeout: 10m
                         when:
                           stageStatus: Success
-                          condition: "false"
                     - step:
                         type: AwsCdkBootstrap
                         name: CDK Bootstrap
