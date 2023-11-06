@@ -88,6 +88,9 @@ pipeline:
                         spec:
                           connectorRef: account.Dockerhub
                           image: mansong/aws-cdk-plugin:1.0.0-python
+                          commandOptions:
+                            - aws://123456789012/us-east-1
+                          appPath: harness-cdk
                         timeout: 10m
                     - step:
                         type: AwsCdkDiff
