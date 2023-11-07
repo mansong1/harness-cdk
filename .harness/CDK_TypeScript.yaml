@@ -1,117 +1,82 @@
----
 pipeline:
-  projectIdentifier: "Serverless"
-  orgIdentifier: "default"
+  projectIdentifier: Serverless
+  orgIdentifier: default
   tags: {}
   properties:
     ci:
       codebase:
-        connectorRef: "account.Github"
-        repoName: "harness-cdk"
-        build: "<+input>"
+        connectorRef: account.Github
+        repoName: harness-cdk
+        build: <+input>
   stages:
-  - stage:
-      name: "Build - Test"
-      identifier: "Build_Test"
-      description: ""
-      type: "CI"
-      spec:
-        cloneCodebase: true
-        platform:
-          os: "Linux"
-          arch: "Amd64"
-        runtime:
-          type: "Cloud"
-          spec: {}
-        execution:
-          steps:
-          - step:
-              type: "RunTests"
-              name: "Unit Tests"
-              identifier: "Unit_Tests"
-              spec:
-                language: "Python"
-                buildTool: "Pytest"
-                args: "--junitxml=out_report.xml"
-                runOnlySelectedTests: true
-                preCommand: "python3 -m venv .venv\n. .venv/bin/activate\npython3\
-                  \ -m pip install -r requirements.txt\npython3 -m pip install -r\
-                  \ requirements-dev.txt"
-                reports:
-                  type: "JUnit"
-                  spec:
-                    paths:
-                    - "out_report.xml*"
-                enableTestSplitting: false
-  - stage:
-      name: "Deploy Dev"
-      identifier: "Deploy_Dev"
-      description: ""
-      type: "Custom"
-      spec:
-        execution:
-          steps:
-          - stepGroup:
-              name: "CDK Deploy"
-              identifier: "CDK_Deploy"
-              steps:
-              - step:
-                  type: "GitClone"
-                  name: "Git Clone"
-                  identifier: "Git_Clone"
-                  spec:
-                    connectorRef: "account.Github"
-                    repoName: "harness-cdk"
-                    build:
-                      type: "branch"
-                      spec:
-                        branch: "main"
-              - step:
-                  type: "AwsCdkSynth"
-                  name: "CDK Synth"
-                  identifier: "CDK_Synth"
-                  spec:
-                    connectorRef: "account.Dockerhub"
-                    image: "mansong/aws-cdk-plugin:1.0.0-python"
-                    appPath: "harness-cdk"
-                  timeout: "10m"
-                  when:
-                    stageStatus: "Success"
-              - step:
-                  type: "AwsCdkBootstrap"
-                  name: "CDK Bootstrap"
-                  identifier: "CDK_Bootstrap"
-                  spec:
-                    connectorRef: "account.Dockerhub"
-                    image: "mansong/aws-cdk-plugin:1.0.0-python"
-                    commandOptions:
-                    - "aws://123456789012/us-east-1"
-                    appPath: "harness-cdk"
-                  timeout: "10m"
-              - step:
-                  type: "AwsCdkDiff"
-                  name: "CDK Diff"
-                  identifier: "CDK_Diff"
-                  spec:
-                    connectorRef: "account.Dockerhub"
-                    image: "mansong/aws-cdk-plugin:1.0.0-python"
-                  timeout: "10m"
-              - step:
-                  type: "AwsCdkDeploy"
-                  name: "CDK Deploy"
-                  identifier: "CDK_Deploy"
-                  spec:
-                    connectorRef: "account.Dockerhub"
-                    image: "mansong/aws-cdk-plugin:1.0.0-python"
-                    provisionerIdentifier: "hitcounter"
-                  timeout: "10m"
-              stepGroupInfra:
-                type: "KubernetesDirect"
-                spec:
-                  connectorRef: "account.Kind"
-                  namespace: "harness-deploy"
-          rollbackSteps: []
-        serviceDependencies: []
-      tags: {}
-  identifier: "CDK_TypeScript"
-  name: "CDK - TypeScript"
+    - stage:
+        name: Deploy Dev
+        identifier: Deploy_Dev
+        description: ""
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - stepGroup:
+                  name: CDK Deploy
+                  identifier: CDK_Deploy
+                  steps:
+                    - step:
+                        type: GitClone
+                        name: Git Clone
+                        identifier: Git_Clone
+                        spec:
+                          connectorRef: account.Github
+                          repoName: harness-cdk
+                          build:
+                            type: branch
+                            spec:
+                              branch: typescript
+                    - step:
+                        type: AwsCdkSynth
+                        name: CDK Synth
+                        identifier: CDK_Synth
+                        spec:
+                          connectorRef: account.Dockerhub
+                          image: harness/aws-cdk-plugin:1.0.0
+                          appPath: harness-cdk
+                          exportTemplate: true
+                        timeout: 10m
+                    - step:
+                        type: AwsCdkBootstrap
+                        name: CDK Bootstrap
+                        identifier: CDK_Bootstrap
+                        spec:
+                          connectorRef: account.Dockerhub
+                          image: mansong/aws-cdk-plugin:1.0.0-python
+                          commandOptions:
+                            - aws://123456789012/us-east-1
+                          appPath: harness-cdk
+                        timeout: 10m
+                    - step:
+                        type: AwsCdkDiff
+                        name: CDK Diff
+                        identifier: CDK_Diff
+                        spec:
+                          connectorRef: account.Dockerhub
+                          image: mansong/aws-cdk-plugin:1.0.0-python
+                        timeout: 10m
+                    - step:
+                        type: AwsCdkDeploy
+                        name: CDK Deploy
+                        identifier: CDK_Deploy
+                        spec:
+                          connectorRef: account.Dockerhub
+                          image: mansong/aws-cdk-plugin:1.0.0-python
+                          provisionerIdentifier: hitcounter
+                        timeout: 10m
+                  stepGroupInfra:
+                    type: KubernetesDirect
+                    spec:
+                      connectorRef: account.Kind
+                      namespace: harness-deploy
+            rollbackSteps: []
+          serviceDependencies: []
+        tags: {}
+  identifier: CDK_TypeScript
+  name: CDK - TypeScript
